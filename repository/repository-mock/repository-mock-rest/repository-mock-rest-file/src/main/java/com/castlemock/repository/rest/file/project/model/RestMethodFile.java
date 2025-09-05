@@ -19,6 +19,7 @@ package com.castlemock.repository.rest.file.project.model;
 import com.castlemock.model.core.Saveable;
 import com.castlemock.model.core.http.HttpMethod;
 import com.castlemock.model.mock.rest.domain.RestMethodStatus;
+import com.castlemock.model.mock.rest.domain.RestMultipleResponseStrategy;
 import com.castlemock.model.mock.rest.domain.RestResponseStrategy;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,6 +49,8 @@ public class RestMethodFile implements Saveable<String> {
     @XmlElement
     private RestResponseStrategy responseStrategy;
     @XmlElement
+    private RestMultipleResponseStrategy multipleResponseStrategy;
+    @XmlElement
     private Integer currentResponseSequenceIndex;
     @XmlElement
     private Boolean simulateNetworkDelay;
@@ -69,6 +72,7 @@ public class RestMethodFile implements Saveable<String> {
         this.resourceId = Objects.requireNonNull(builder.resourceId, "resourceId");
         this.httpMethod = Objects.requireNonNull(builder.httpMethod, "httpMethod");
         this.responseStrategy = Objects.requireNonNull(builder.responseStrategy, "responseStrategy");
+        this.multipleResponseStrategy = builder.multipleResponseStrategy;
         this.currentResponseSequenceIndex = Objects.requireNonNull(builder.currentResponseSequenceIndex, "currentResponseSequenceIndex");
         this.defaultBody = builder.defaultBody;
         this.forwardedEndpoint = builder.forwardedEndpoint;
@@ -111,6 +115,10 @@ public class RestMethodFile implements Saveable<String> {
         return responseStrategy;
     }
 
+    public RestMultipleResponseStrategy getMultipleResponseStrategy() {
+        return multipleResponseStrategy;
+    }
+
     public Integer getCurrentResponseSequenceIndex() {
         return currentResponseSequenceIndex;
     }
@@ -144,6 +152,7 @@ public class RestMethodFile implements Saveable<String> {
         private String forwardedEndpoint;
         private RestMethodStatus status;
         private RestResponseStrategy responseStrategy;
+        private RestMultipleResponseStrategy multipleResponseStrategy;
         private Integer currentResponseSequenceIndex;
         private Boolean simulateNetworkDelay;
         private Long networkDelay;
@@ -191,6 +200,11 @@ public class RestMethodFile implements Saveable<String> {
 
         public Builder responseStrategy(final RestResponseStrategy responseStrategy) {
             this.responseStrategy = responseStrategy;
+            return this;
+        }
+
+        public Builder multipleResponseStrategy(final RestMultipleResponseStrategy multipleResponseStrategy) {
+            this.multipleResponseStrategy = multipleResponseStrategy;
             return this;
         }
 

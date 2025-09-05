@@ -34,6 +34,8 @@ public final class RestMethodConverter {
                 .resourceId(restMethod.getResourceId())
                 .currentResponseSequenceIndex(restMethod.getCurrentResponseSequenceIndex())
                 .responseStrategy(restMethod.getResponseStrategy())
+                .multipleResponseStrategy(restMethod.getMultipleResponseStrategy()
+                        .orElse(null))
                 .simulateNetworkDelay(restMethod.getSimulateNetworkDelay()
                         .orElse(null))
                 .automaticForward(restMethod.getAutomaticForward()

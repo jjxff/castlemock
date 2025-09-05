@@ -18,6 +18,7 @@ package com.castlemock.web.mock.rest.model;
 
 import com.castlemock.model.core.http.HttpMethod;
 import com.castlemock.model.mock.rest.domain.RestMethodStatus;
+import com.castlemock.model.mock.rest.domain.RestMultipleResponseStrategy;
 import com.castlemock.model.mock.rest.domain.RestResponseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -40,6 +41,7 @@ public class UpdateRestMethodRequest {
     private final String forwardedEndpoint;
     private final RestMethodStatus status;
     private final RestResponseStrategy responseStrategy;
+    private final RestMultipleResponseStrategy multipleResponseStrategy;
     private final Boolean simulateNetworkDelay;
     private final Long networkDelay;
     private final String defaultMockResponseId;
@@ -52,6 +54,7 @@ public class UpdateRestMethodRequest {
         this.responseStrategy = Objects.requireNonNull(builder.responseStrategy, "responseStrategy");
 
         this.forwardedEndpoint = builder.forwardedEndpoint;
+        this.multipleResponseStrategy = builder.multipleResponseStrategy;
         this.simulateNetworkDelay = builder.simulateNetworkDelay;
         this.networkDelay = builder.networkDelay;
         this.defaultMockResponseId = builder.defaultMockResponseId;
@@ -81,6 +84,11 @@ public class UpdateRestMethodRequest {
     @XmlElement
     public RestResponseStrategy getResponseStrategy() {
         return responseStrategy;
+    }
+
+    @XmlElement
+    public Optional<RestMultipleResponseStrategy> getMultipleResponseStrategy() {
+        return Optional.ofNullable(multipleResponseStrategy);
     }
 
     @XmlElement
@@ -141,6 +149,7 @@ public class UpdateRestMethodRequest {
         private String forwardedEndpoint;
         private RestMethodStatus status;
         private RestResponseStrategy responseStrategy;
+        private RestMultipleResponseStrategy multipleResponseStrategy;
         private Boolean simulateNetworkDelay;
         private Long networkDelay;
         private String defaultMockResponseId;
@@ -171,6 +180,11 @@ public class UpdateRestMethodRequest {
 
         public Builder responseStrategy(final RestResponseStrategy responseStrategy) {
             this.responseStrategy = responseStrategy;
+            return this;
+        }
+
+        public Builder multipleResponseStrategy(final RestMultipleResponseStrategy multipleResponseStrategy) {
+            this.multipleResponseStrategy = multipleResponseStrategy;
             return this;
         }
 

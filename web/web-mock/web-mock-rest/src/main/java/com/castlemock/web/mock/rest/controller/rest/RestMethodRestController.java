@@ -124,6 +124,7 @@ public class RestMethodRestController extends AbstractRestController {
             @Parameter(name = "methodId", description = "The id of the method")
             @PathVariable(value = "methodId") final String methodId,
             @RequestBody UpdateRestMethodRequest request) {
+        System.out.println("DEBUG: Received request with multipleResponseStrategy: " + request.getMultipleResponseStrategy());
         final UpdateRestMethodOutput output = super.serviceProcessor.process(UpdateRestMethodInput.builder()
                 .projectId(projectId)
                 .applicationId(applicationId)
@@ -132,6 +133,8 @@ public class RestMethodRestController extends AbstractRestController {
                 .name(request.getName())
                 .httpMethod(request.getHttpMethod())
                 .responseStrategy(request.getResponseStrategy())
+                .multipleResponseStrategy(request.getMultipleResponseStrategy()
+                        .orElse(null))
                 .status(request.getStatus())
                 .defaultMockResponseId(request.getDefaultMockResponseId()
                         .orElse(null))

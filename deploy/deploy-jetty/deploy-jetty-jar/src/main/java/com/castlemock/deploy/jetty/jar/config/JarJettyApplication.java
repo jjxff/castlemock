@@ -22,6 +22,8 @@ import com.castlemock.app.config.PropertyConfig;
 import com.castlemock.app.config.RestSecurityConfig;
 import com.castlemock.app.config.SecurityConfig;
 import com.castlemock.deploy.jetty.common.JettyConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.springframework.boot.SpringApplication;
@@ -72,5 +74,10 @@ public class JarJettyApplication extends Application implements WebApplicationIn
                     setScanManifest(false);
                 }}
         );
+    }
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.castlemock.deploy.jetty</groupId>
         <artifactId>deploy-jetty</artifactId>
-        <version>${project.version}</version>
+        <version>1.69.0</version>
         <relativePath>../</relativePath>
     </parent>
 

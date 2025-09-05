@@ -3,13 +3,14 @@
 <h1 align="center"> Castle Mock: <br/>Mock RESTful APIs and SOAP web services</h1>
 
 > [!CAUTION]
-> Castle Mock is no longer maintained and will not receive future updates.  
-> The [GitHub repository](https://github.com/castlemock/castlemock) remains available for reference, but we recommend exploring alternatives for active use. The [Docker Hub repository](https://hub.docker.com/r/castlemock/castlemock) will also be deprecated and eventually deleted. 
-> Please see **[DEPRECATION](https://github.com/castlemock/castlemock/blob/master/DEPRECATION.md)** for more information.
+> **Original Castle Mock** is no longer maintained and will not receive future updates from the original maintainers.  
+> The [original GitHub repository](https://github.com/castlemock/castlemock) remains available for reference, but the original team recommends exploring alternatives for active use.
+> 
+> **This is a community fork** attempting to continue development with improvements and new features. This version includes enhancements not available in the original deprecated version.
 
 <p align="center">
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue.svg"></a>
-    <img src="https://img.shields.io/badge/status-unmaintained-red">
+    <img src="https://img.shields.io/badge/status-community%20maintained-green">
 </p>
 
 **Castle Mock** is a web application that provides the functionality to mock out RESTful APIs and SOAP web services. This functionality allows client-side developers to completely mimic a server side behaviour and shape the responses themselves.
@@ -18,6 +19,7 @@ Table Of Content
 ----
 
 - [About](#about)
+- [Community Fork Changes](#community-fork-changes)
 - [What to Use Castle Mock for and When to Use It](#what-to-use-castle-mock-for-and-when-to-use-it)
 - [Installation](#installation)
 - [Documentation](#documentation)
@@ -28,6 +30,17 @@ Table Of Content
 **Castle Mock** can create mocked services based on WSDL, WADL, Swagger and RAML definition files. The web-services defined within the files will be mocked automatically by **Castle Mock**. Once the mocks for the web-services are created, they can be configured to mock the service or forward the request to the original endpoint. The response from the forwarded requests can be recorded automatically and used to create new mocked responses.
 
 **Castle Mock** is completely free and open source (Apache License). It is built with Java and the application itself is deployed to an Apache Tomcat server.
+
+## Community Fork Changes
+
+This community fork includes enhancements and new features over the original deprecated version. 
+
+**Latest Version: 1.69.0** - [View Full Changelog](changelog/1.69.0.md)
+
+### Recent Highlights
+- **Multiple Response Strategies**: REST methods can now use multiple response strategies simultaneously with AND logic
+- **Enhanced Expression Support**: Improved conditional response matching capabilities
+- **Backward Compatibility**: All changes are fully backward compatible with existing projects
 
 ## What to Use Castle Mock for and When to Use It
 

@@ -20,6 +20,7 @@ import validateErrorResponse from "../../../../../utility/HttpResponseValidator"
 import preventEnterEvent from "../../../../../utility/KeyboardUtility";
 import {
     methodResponseStrategyFormatter,
+    methodMultipleResponseStrategyFormatter,
     methodStatusFormatter
 } from "../../utility/RestFormatter";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -33,6 +34,7 @@ class UpdateMethodModal extends PureComponent {
         this.onTypeChange = this.onTypeChange.bind(this);
         this.onStatusChange = this.onStatusChange.bind(this);
         this.onResponseStrategyChange = this.onResponseStrategyChange.bind(this);
+        this.onMultipleStrategyChange = this.onMultipleStrategyChange.bind(this);
         this.onForwardedEndpointChange = this.onForwardedEndpointChange.bind(this);
         this.onSimulateNetworkDelayChange = this.onSimulateNetworkDelayChange.bind(this);
         this.onAutomaticForward = this.onAutomaticForward.bind(this);
@@ -44,7 +46,8 @@ class UpdateMethodModal extends PureComponent {
 
         this.state = {
             updateMethod: {},
-            mockResponses: []
+            mockResponses: [],
+            selectedMultipleStrategies: []
         };
 
         this.getMethod();
@@ -78,6 +81,28 @@ class UpdateMethodModal extends PureComponent {
         this.setState({ updateMethod: {
                 ...this.state.updateMethod,
                 responseStrategy: responseStrategy
+            }
+        });
+    }
+
+    onMultipleStrategyChange(strategy, isChecked){
+        let selectedStrategies = [...this.state.selectedMultipleStrategies];
+        
+        if(isChecked) {
+            if(!selectedStrategies.includes(strategy)) {
+                selectedStrategies.push(strategy);
+            }
+        } else {
+            selectedStrategies = selectedStrategies.filter(s => s !== strategy);
+        }
+        
+        this.setState({ 
+            selectedMultipleStrategies: selectedStrategies,
+            updateMethod: {
+                ...this.state.updateMethod,
+                multipleResponseStrategy: selectedStrategies.length > 0 ? {
+                    strategies: selectedStrategies
+                } : null
             }
         });
     }
@@ -119,19 +144,28 @@ class UpdateMethodModal extends PureComponent {
         axios
             .get(process.env.PUBLIC_URL + "/api/rest/rest/project/" + this.props.projectId + "/application/" + this.props.applicationId + "/resource/" + this.props.resourceId + "/method/" + this.props.methodId)
             .then(response => {
+                let strategies = [];
+                if (response.data.responseStrategy && response.data.responseStrategy !== "MULTIPLE") {
+                    strategies = [response.data.responseStrategy];
+                } else if (response.data.multipleResponseStrategy && response.data.multipleResponseStrategy.strategies) {
+                    strategies = response.data.multipleResponseStrategy.strategies;
+                }
+                
                 this.setState({
                     updateMethod: {
                         name: response.data.name,
                         httpMethod: response.data.httpMethod,
                         status: response.data.status,
-                        responseStrategy: response.data.responseStrategy,
+                        responseStrategy: "MULTIPLE",
+                        multipleResponseStrategy: strategies.length > 0 ? { strategies: strategies } : null,
                         forwardedEndpoint: response.data.forwardedEndpoint,
                         simulateNetworkDelay: response.data.simulateNetworkDelay,
                         networkDelay: response.data.networkDelay,
                         defaultMockResponseId: response.data.defaultMockResponseId,
                         automaticForward: response.data.automaticForward
                     },
-                    mockResponses: response.data.mockResponses
+                    mockResponses: response.data.mockResponses,
+                    selectedMultipleStrategies: strategies
                 });
             })
             .catch(error => {
@@ -218,18 +252,67 @@ class UpdateMethodModal extends PureComponent {
                                 </div>
                             </div>
                             <div className="form-group row">
-                                <label className="col-sm-3 col-form-label">Response strategy</label>
+                                <label className="col-sm-3 col-form-label">Response strategies</label>
                                 <div className="col-sm-9">
-                                    <select id="inputStatus" className="form-control"
-                                            value={this.state.updateMethod.responseStrategy}
-                                            onChange={event => this.onResponseStrategyChange(event.target.value)}>
-                                        <option value={"RANDOM"}>{methodResponseStrategyFormatter("RANDOM")}</option>
-                                        <option value={"SEQUENCE"}>{methodResponseStrategyFormatter("SEQUENCE")}</option>
-                                        <option value={"XPATH"}>{methodResponseStrategyFormatter("XPATH")}</option>
-                                        <option value={"JSON_PATH"}>{methodResponseStrategyFormatter("JSON_PATH")}</option>
-                                        <option value={"QUERY_MATCH"}>{methodResponseStrategyFormatter("QUERY_MATCH")}</option>
-                                        <option value={"HEADER_QUERY_MATCH"}>{methodResponseStrategyFormatter("HEADER_QUERY_MATCH")}</option>
-                                    </select>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategyRandom" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("RANDOM")}
+                                                   onChange={event => this.onMultipleStrategyChange("RANDOM", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategyRandom">
+                                                Random
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategySequence" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("SEQUENCE")}
+                                                   onChange={event => this.onMultipleStrategyChange("SEQUENCE", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategySequence">
+                                                Sequence
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategyXPath" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("XPATH")}
+                                                   onChange={event => this.onMultipleStrategyChange("XPATH", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategyXPath">
+                                                XPath
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategyJsonPath" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("JSON_PATH")}
+                                                   onChange={event => this.onMultipleStrategyChange("JSON_PATH", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategyJsonPath">
+                                                JSON Path
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategyQueryMatch" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("QUERY_MATCH")}
+                                                   onChange={event => this.onMultipleStrategyChange("QUERY_MATCH", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategyQueryMatch">
+                                                Parameter query match
+                                            </label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" 
+                                                   id="strategyHeaderQueryMatch" 
+                                                   checked={this.state.selectedMultipleStrategies.includes("HEADER_QUERY_MATCH")}
+                                                   onChange={event => this.onMultipleStrategyChange("HEADER_QUERY_MATCH", event.target.checked)}/>
+                                            <label className="form-check-label" htmlFor="strategyHeaderQueryMatch">
+                                                Header query match
+                                            </label>
+                                        </div>
+                                        {this.state.selectedMultipleStrategies.length > 0 && (
+                                            <small className="form-text text-muted">
+                                                Selected: {methodMultipleResponseStrategyFormatter(this.state.selectedMultipleStrategies)}
+                                            </small>
+                                        )}
                                 </div>
                             </div>
                             <div className="form-group row">

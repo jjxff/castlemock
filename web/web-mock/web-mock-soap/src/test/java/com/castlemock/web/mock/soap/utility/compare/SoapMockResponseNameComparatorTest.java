@@ -44,7 +44,7 @@ class SoapMockResponseNameComparatorTest {
         responses.sort(new SoapMockResponseNameComparator());
 
         Assertions.assertEquals(3, responses.size());
-        Assertions.assertEquals(response3, responses.get(0));
+        Assertions.assertEquals(response3, responses.getFirst());
         Assertions.assertEquals(response1, responses.get(1));
         Assertions.assertEquals(response2, responses.get(2));
     }
