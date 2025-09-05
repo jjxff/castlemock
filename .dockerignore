@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+
+# IDE files
+.idea
+*.iml
+.vscode
+.eclipse
+.settings
+.project
+.classpath
+
+# Build artifacts
+target/
+build/
+*.jar
+*.war
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (will be rebuilt)
+node_modules/
+web/web-frontend/node_modules/
+web/web-frontend/build/
+
+# Documentation
+*.md
+changelog/
+.claude/
+
+# Docker files
+Dockerfile*
+.dockerignore
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~

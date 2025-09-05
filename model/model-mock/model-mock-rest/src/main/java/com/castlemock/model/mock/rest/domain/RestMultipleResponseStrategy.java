@@ -18,6 +18,8 @@ package com.castlemock.model.mock.rest.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,6 +43,8 @@ public class RestMultipleResponseStrategy {
 
     @XmlElementWrapper(name = "strategies")
     @XmlElement(name = "strategy")
+    @JacksonXmlElementWrapper(localName = "strategies")
+    @JacksonXmlProperty(localName = "strategy")
     private List<RestResponseStrategy> strategies;
 
     public RestMultipleResponseStrategy() {
@@ -101,6 +105,12 @@ public class RestMultipleResponseStrategy {
 
         public Builder strategies(final List<RestResponseStrategy> strategies) {
             this.strategies = strategies;
+            return this;
+        }
+
+        // For Jackson XML deserialization - ignore empty field
+        public Builder empty(final boolean empty) {
+            // This field is ignored, just for compatibility
             return this;
         }
 
