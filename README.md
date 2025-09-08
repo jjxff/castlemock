@@ -35,9 +35,13 @@ Table Of Content
 
 This community fork includes enhancements and new features over the original deprecated version. 
 
-**Latest Version: 1.69.0** - [View Full Changelog](changelog/1.69.0.md)
+**Latest Version: 1.69.1** - [View Full Changelog](changelog/1.69.1.md)
 
 ### Recent Highlights
+- **🛡️ Guard Functionality (v1.69.1)**: New header interceptor feature for REST mock responses
+  - Configure guards to validate headers (JWT tokens, API keys) before processing other responses  
+  - Returns configured response immediately if validation fails (e.g., 401 Unauthorized)
+  - Works independently of Response Strategies for maximum flexibility
 - **Multiple Response Strategies**: REST methods can now use multiple response strategies simultaneously with AND logic
 - **Enhanced Expression Support**: Improved conditional response matching capabilities
 - **Backward Compatibility**: All changes are fully backward compatible with existing projects

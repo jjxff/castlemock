@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.castlemock.deploy</groupId>
         <artifactId>deploy</artifactId>
-        <version>1.69.0</version>
+        <version>1.69.1</version>
         <relativePath>../</relativePath>
     </parent>
 

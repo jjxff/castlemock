@@ -57,6 +57,7 @@ public class UpdateRestMockResponseService extends AbstractRestProjectService im
                         .xpathExpressions(input.getXpathExpressions())
                         .jsonPathExpressions(input.getJsonPathExpressions())
                         .headerQueries(input.getHeaderQueries())
+                        .isGuard(input.getIsGuard().orElse(false))
                         .build())
                 .map(mockResponse -> this.mockResponseRepository.update(mockResponse.getId(), mockResponse));
 

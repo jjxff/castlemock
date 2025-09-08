@@ -88,6 +88,9 @@ public class RestMockResponse {
     @XmlElement(name = "headerQuery")
     private final List<RestHeaderQuery> headerQueries;
 
+    @XmlElement
+    private final Boolean isGuard;
+
 
     private RestMockResponse(final Builder builder){
         this.id = Objects.requireNonNull(builder.id, "id");
@@ -103,6 +106,7 @@ public class RestMockResponse {
         this.xpathExpressions = Optional.ofNullable(builder.xpathExpressions).orElseGet(List::of);
         this.jsonPathExpressions = Optional.ofNullable(builder.jsonPathExpressions).orElseGet(List::of);
         this.headerQueries = Optional.ofNullable(builder.headerQueries).orElseGet(List::of);
+        this.isGuard = builder.isGuard;
     }
 
     public String getId() {
@@ -169,6 +173,10 @@ public class RestMockResponse {
                 .orElseGet(List::of);
     }
 
+    public Optional<Boolean> getIsGuard() {
+        return Optional.ofNullable(isGuard);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -186,12 +194,13 @@ public class RestMockResponse {
                 Objects.equals(parameterQueries, that.parameterQueries) &&
                 Objects.equals(xpathExpressions, that.xpathExpressions) &&
                 Objects.equals(jsonPathExpressions, that.jsonPathExpressions) &&
-                Objects.equals(headerQueries, that.headerQueries);
+                Objects.equals(headerQueries, that.headerQueries) &&
+                Objects.equals(isGuard, that.isGuard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, body, methodId, httpStatusCode, status, usingExpressions, httpHeaders, contentEncodings, parameterQueries, xpathExpressions, jsonPathExpressions, headerQueries);
+        return Objects.hash(id, name, body, methodId, httpStatusCode, status, usingExpressions, httpHeaders, contentEncodings, parameterQueries, xpathExpressions, jsonPathExpressions, headerQueries, isGuard);
     }
 
     @Override
@@ -210,6 +219,7 @@ public class RestMockResponse {
                 ", xpathExpressions=" + xpathExpressions +
                 ", jsonPathExpressions=" + jsonPathExpressions +
                 ", headerQueries=" + headerQueries +
+                ", isGuard=" + isGuard +
                 '}';
     }
 
@@ -259,7 +269,8 @@ public class RestMockResponse {
                                 .map(RestHeaderQuery::toBuilder)
                                 .map(RestHeaderQuery.Builder::build)
                                 .collect(Collectors.toList()))
-                        .orElse(null));
+                        .orElse(null))
+                .isGuard(isGuard);
     }
 
 
@@ -282,6 +293,7 @@ public class RestMockResponse {
         private List<RestXPathExpression> xpathExpressions;
         private List<RestJsonPathExpression> jsonPathExpressions;
         private List<RestHeaderQuery> headerQueries;
+        private Boolean isGuard;
 
         private Builder() {
         }
@@ -348,6 +360,11 @@ public class RestMockResponse {
 
         public Builder headerQueries(final List<RestHeaderQuery> headerQueries) {
             this.headerQueries = headerQueries;
+            return this;
+        }
+
+        public Builder isGuard(final Boolean isGuard) {
+            this.isGuard = isGuard;
             return this;
         }
 

@@ -68,6 +68,8 @@ public class RestMockResponseFile implements Saveable<String> {
     @XmlElementWrapper(name = "headerQueries")
     @XmlElement(name = "headerQuery")
     private List<RestHeaderQueryFile> headerQueries;
+    @XmlElement
+    private Boolean isGuard;
 
     private RestMockResponseFile() {
 
@@ -93,6 +95,7 @@ public class RestMockResponseFile implements Saveable<String> {
                 .orElseGet(List::of);
         this.headerQueries = Optional.ofNullable(builder.headerQueries)
                 .orElseGet(List::of);
+        this.isGuard = builder.isGuard;
     }
 
     @Override
@@ -148,6 +151,10 @@ public class RestMockResponseFile implements Saveable<String> {
         return headerQueries;
     }
 
+    public Boolean getIsGuard() {
+        return isGuard;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o)
@@ -182,6 +189,7 @@ public class RestMockResponseFile implements Saveable<String> {
         private List<RestXPathExpressionFile> xpathExpressions;
         private List<RestJsonPathExpressionFile> jsonPathExpressions;
         private List<RestHeaderQueryFile> headerQueries;
+        private Boolean isGuard;
 
         private Builder() {
         }
@@ -249,6 +257,11 @@ public class RestMockResponseFile implements Saveable<String> {
 
         public Builder headerQueries(final List<RestHeaderQueryFile> headerQueries) {
             this.headerQueries = headerQueries;
+            return this;
+        }
+
+        public Builder isGuard(final Boolean isGuard) {
+            this.isGuard = isGuard;
             return this;
         }
 

@@ -51,6 +51,7 @@ public final class UpdateRestMockResponseInput implements Input {
     private final List<RestXPathExpression> xpathExpressions;
     private final List<RestJsonPathExpression> jsonPathExpressions;
     private final List<RestHeaderQuery> headerQueries;
+    private final Boolean isGuard;
 
     private UpdateRestMockResponseInput(final Builder builder) {
         this.projectId = Objects.requireNonNull(builder.projectId, "projectId");
@@ -69,6 +70,7 @@ public final class UpdateRestMockResponseInput implements Input {
         this.xpathExpressions = builder.xpathExpressions;
         this.jsonPathExpressions = builder.jsonPathExpressions;
         this.headerQueries = builder.headerQueries;
+        this.isGuard = builder.isGuard;
     }
 
     public String getProjectId() {
@@ -147,6 +149,10 @@ public final class UpdateRestMockResponseInput implements Input {
                 .orElseGet(List::of);
     }
 
+    public Optional<Boolean> getIsGuard() {
+        return Optional.ofNullable(isGuard);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -161,14 +167,15 @@ public final class UpdateRestMockResponseInput implements Input {
                 Objects.equals(parameterQueries, that.parameterQueries) &&
                 Objects.equals(xpathExpressions, that.xpathExpressions) &&
                 Objects.equals(jsonPathExpressions, that.jsonPathExpressions) &&
-                Objects.equals(headerQueries, that.headerQueries);
+                Objects.equals(headerQueries, that.headerQueries) &&
+                Objects.equals(isGuard, that.isGuard);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(projectId, applicationId, resourceId, methodId, mockResponseId,
                 name, httpStatusCode, status, body, usingExpressions, httpHeaders,
-                contentEncodings, parameterQueries, xpathExpressions, jsonPathExpressions, headerQueries);
+                contentEncodings, parameterQueries, xpathExpressions, jsonPathExpressions, headerQueries, isGuard);
     }
 
     @Override
@@ -215,6 +222,7 @@ public final class UpdateRestMockResponseInput implements Input {
         private List<RestXPathExpression> xpathExpressions;
         private List<RestJsonPathExpression> jsonPathExpressions;
         private List<RestHeaderQuery> headerQueries;
+        private Boolean isGuard;
 
         private Builder() {
         }
@@ -296,6 +304,11 @@ public final class UpdateRestMockResponseInput implements Input {
 
         public Builder headerQueries(final List<RestHeaderQuery> headerQueries) {
             this.headerQueries = headerQueries;
+            return this;
+        }
+
+        public Builder isGuard(final Boolean isGuard) {
+            this.isGuard = isGuard;
             return this;
         }
 

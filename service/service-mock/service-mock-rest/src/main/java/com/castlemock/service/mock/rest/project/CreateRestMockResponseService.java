@@ -57,6 +57,7 @@ public class CreateRestMockResponseService extends AbstractRestProjectService im
                 .methodId(input.getMethodId())
                 .name(input.getName())
                 .usingExpressions(input.getUsingExpressions().orElse(false))
+                .isGuard(input.getIsGuard().orElse(false))
                 .build();
         final RestMockResponse createdMockResponse = mockResponseRepository.save(mockResponse);
         return createServiceResult(CreateRestMockResponseOutput.builder()

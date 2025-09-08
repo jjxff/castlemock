@@ -59,6 +59,7 @@ public final class RestMockResponseFileConverter {
                         .map(HttpHeaderFileConverter::toHttpHeader)
                         .collect(Collectors.toList()))
                 .contentEncodings(new ArrayList<>(restMockResponseFile.getContentEncodings()))
+                .isGuard(restMockResponseFile.getIsGuard())
                 .build();
     }
 

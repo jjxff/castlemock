@@ -1,0 +1,2 @@
+docker compose up -d
+# UI: http://localhost:8085/castlemock  (user: admin / pass: admin)

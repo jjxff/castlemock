@@ -457,10 +457,22 @@ public abstract class AbstractRestServiceController extends AbstractController {
             }
 
         } else if (restMethod.getResponseStrategy().equals(RestResponseStrategy.HEADER_QUERY_MATCH)) {
+            // First, check guard responses - return guard if validation FAILS
             mockResponse = mockResponses.stream()
-                    .filter(tmp -> RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
+                    .filter(tmp -> tmp.getIsGuard().orElse(false))
+                    .filter(tmp -> !tmp.getHeaderQueries().isEmpty() && 
+                                   !RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
                     .findFirst()
                     .orElse(null);
+
+            // If no guard failed, proceed with normal header query matching
+            if (mockResponse == null) {
+                mockResponse = mockResponses.stream()
+                        .filter(tmp -> !tmp.getIsGuard().orElse(false))
+                        .filter(tmp -> RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
+                        .findFirst()
+                        .orElse(null);
+            }
 
             if (mockResponse == null) {
                 LOGGER.info("Unable to match the input Query to a response");
@@ -552,19 +564,36 @@ public abstract class AbstractRestServiceController extends AbstractController {
                                                         final String applicationId,
                                                         final String resourceId) {
         
+        // Evaluate guards FIRST, independently of response strategies
+        final List<RestMockResponse> guards = mockResponses.stream()
+                .filter(mockResponse -> mockResponse.getIsGuard().orElse(false))
+                .collect(Collectors.toList());
+        
+        for(RestMockResponse guard : guards){
+            if(!RestHeaderQueryValidator.validate(guard.getHeaderQueries(), restRequest.getHttpHeaders())){
+                LOGGER.debug("Guard failed validation, returning guard response: " + guard.getName());
+                return guard;
+            }
+        }
+        
+        // Filter out guards from regular response selection
+        List<RestMockResponse> nonGuardResponses = mockResponses.stream()
+                .filter(mockResponse -> !mockResponse.getIsGuard().orElse(false))
+                .collect(Collectors.toList());
+        
         if (!restMethod.getMultipleResponseStrategy().isPresent()) {
             LOGGER.warn("Multiple response strategy is selected but no strategies are configured");
-            return this.getDefaultMockResponse(restMethod, mockResponses).orElse(null);
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
         }
 
         List<RestResponseStrategy> strategies = restMethod.getMultipleResponseStrategy().get().getStrategies();
         if (strategies.isEmpty()) {
             LOGGER.warn("Multiple response strategy is selected but no strategies are configured");
-            return this.getDefaultMockResponse(restMethod, mockResponses).orElse(null);
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
         }
 
         // Find responses that match ALL selected strategies
-        List<RestMockResponse> candidates = mockResponses.stream()
+        List<RestMockResponse> candidates = nonGuardResponses.stream()
                 .filter(mockResponse -> {
                     boolean matchesAllStrategies = true;
                     
@@ -615,7 +644,7 @@ public abstract class AbstractRestServiceController extends AbstractController {
 
         if (candidates.isEmpty()) {
             LOGGER.info("No mock response matches all selected strategies");
-            return this.getDefaultMockResponse(restMethod, mockResponses).orElse(null);
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
         }
 
         // If we have candidates, apply RANDOM or SEQUENCE logic if they are selected

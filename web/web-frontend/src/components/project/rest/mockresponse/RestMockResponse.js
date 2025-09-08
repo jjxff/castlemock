@@ -45,6 +45,7 @@ class RestMockResponse extends PureComponent {
         this.setHttpStatusCode = this.setHttpStatusCode.bind(this);
         this.setStatus = this.setStatus.bind(this);
         this.setUsingExpression = this.setUsingExpression.bind(this);
+        this.setIsGuard = this.setIsGuard.bind(this);
         this.setBody = this.setBody.bind(this);
         this.onHeaderAdded = this.onHeaderAdded.bind(this);
         this.onHeaderRemoved = this.onHeaderRemoved.bind(this);
@@ -234,6 +235,15 @@ class RestMockResponse extends PureComponent {
         });
     }
 
+    setIsGuard(source) {
+        this.setState({
+            updateMockResponse: {
+                ...this.state.updateMockResponse,
+                isGuard: source.target.checked
+            }
+        });
+    }
+
     setBody(source) {
         this.setState({
             updateMockResponse: {
@@ -324,6 +334,13 @@ class RestMockResponse extends PureComponent {
                         <dl className="row">
                             <dt className="col-sm-3 content-title">Use Expression</dt>
                             <dd className="col-sm-9"><input type="checkbox" checked={this.state.updateMockResponse.usingExpressions} onChange={this.setUsingExpression}/></dd>
+                        </dl>
+                        <dl className="row">
+                            <dt className="col-sm-3 content-title">Is Guard</dt>
+                            <dd className="col-sm-9">
+                                <input type="checkbox" checked={this.state.updateMockResponse.isGuard} onChange={this.setIsGuard}/>
+                                <span className="ml-2" title="Acts as header interceptor. Evaluates first before other responses. Returns this response if header validation fails (useful for JWT/API key validation).">ℹ️</span>
+                            </dd>
                         </dl>
                     </div>
                     <div>

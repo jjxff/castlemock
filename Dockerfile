@@ -19,7 +19,7 @@ FROM eclipse-temurin:21-jre-alpine AS runtime
 # Add metadata
 LABEL org.opencontainers.image.title="Castle Mock Community Fork"
 LABEL org.opencontainers.image.description="Mock RESTful APIs and SOAP web services"
-LABEL org.opencontainers.image.version="1.69.0"
+LABEL org.opencontainers.image.version="1.69.1"
 LABEL org.opencontainers.image.source="https://github.com/jjxff/castlemock"
 
 # Create non-root user
