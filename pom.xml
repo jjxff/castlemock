@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.castlemock</groupId>
     <artifactId>castlemock</artifactId>
-    <version>1.69.1</version>
+    <version>1.69.2</version>
     <packaging>pom</packaging>
 
     <properties>
