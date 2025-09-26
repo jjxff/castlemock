@@ -1,19 +1,4 @@
-# Multi-stage build for Castle Mock Community Fork
-FROM eclipse-temurin:21-jdk-alpine AS build
-
-# Install Node.js and yarn for frontend build
-RUN apk add --no-cache nodejs npm yarn
-
-# Set working directory
-WORKDIR /app
-
-# Copy source code
-COPY . .
-
-# Build the application
-RUN ./mvnw clean package -DskipTests
-
-# Runtime stage
+# Simple Dockerfile using pre-built JAR
 FROM eclipse-temurin:21-jre-alpine AS runtime
 
 # Add metadata
@@ -30,8 +15,8 @@ RUN addgroup -g 1000 castlemock && \
 RUN mkdir -p /app /home/castlemock/.castlemock && \
     chown -R castlemock:castlemock /app /home/castlemock
 
-# Copy the built JAR from build stage
-COPY --from=build --chown=castlemock:castlemock /app/deploy/deploy-jetty/deploy-jetty-jar/target/castlemock.jar /app/
+# Copy the pre-built JAR
+COPY --chown=castlemock:castlemock deploy/deploy-jetty/deploy-jetty-jar/target/castlemock.jar /app/
 
 # Switch to non-root user
 USER castlemock

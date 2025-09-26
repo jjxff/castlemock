@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.castlemock.repository.mock</groupId>
         <artifactId>repository-mock</artifactId>
-        <version>1.69.1</version>
+        <version>1.69.2</version>
         <relativePath>../</relativePath>
     </parent>
 
