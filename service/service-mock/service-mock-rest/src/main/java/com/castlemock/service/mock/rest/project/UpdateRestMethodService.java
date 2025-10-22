@@ -43,11 +43,14 @@ public class UpdateRestMethodService extends AbstractRestProjectService implemen
     @Override
     public ServiceResult<UpdateRestMethodOutput> process(final ServiceTask<UpdateRestMethodInput> serviceTask) {
         final UpdateRestMethodInput input = serviceTask.getInput();
+        System.out.println("DEBUG: Processing with multipleResponseStrategy: " + input.getMultipleResponseStrategy());
         final Optional<RestMethod> updated = this.methodRepository.findOne(input.getMethodId())
                 .map(method -> method.toBuilder()
                         .name(input.getName())
                         .httpMethod(input.getHttpMethod())
                         .responseStrategy(input.getResponseStrategy())
+                        .multipleResponseStrategy(input.getMultipleResponseStrategy()
+                                .orElse(null))
                         .status(input.getStatus())
                         .forwardedEndpoint(input.getForwardedEndpoint()
                                 .orElse(null))

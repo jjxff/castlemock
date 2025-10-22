@@ -457,15 +457,29 @@ public abstract class AbstractRestServiceController extends AbstractController {
             }
 
         } else if (restMethod.getResponseStrategy().equals(RestResponseStrategy.HEADER_QUERY_MATCH)) {
+            // First, check guard responses - return guard if validation FAILS
             mockResponse = mockResponses.stream()
-                    .filter(tmp -> RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
+                    .filter(tmp -> tmp.getIsGuard().orElse(false))
+                    .filter(tmp -> !tmp.getHeaderQueries().isEmpty() && 
+                                   !RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
                     .findFirst()
                     .orElse(null);
+
+            // If no guard failed, proceed with normal header query matching
+            if (mockResponse == null) {
+                mockResponse = mockResponses.stream()
+                        .filter(tmp -> !tmp.getIsGuard().orElse(false))
+                        .filter(tmp -> RestHeaderQueryValidator.validate(tmp.getHeaderQueries(), restRequest.getHttpHeaders()))
+                        .findFirst()
+                        .orElse(null);
+            }
 
             if (mockResponse == null) {
                 LOGGER.info("Unable to match the input Query to a response");
                 mockResponse = this.getDefaultMockResponse(restMethod, mockResponses).orElse(null);
             }
+        } else if (restMethod.getResponseStrategy().equals(RestResponseStrategy.MULTIPLE)) {
+            mockResponse = evaluateMultipleStrategies(restRequest, restMethod, mockResponses, pathParameters, httpServletRequest, projectId, applicationId, resourceId);
         }
 
         if (mockResponse == null && restMethod.getAutomaticForward().orElse(false) && restMethod.getForwardedEndpoint().isPresent()) {
@@ -528,6 +542,136 @@ public abstract class AbstractRestServiceController extends AbstractController {
                         .map(String::toLowerCase)
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
+    }
+
+    /**
+     * Evaluates multiple response strategies using AND logic.
+     * All selected strategies must match for a response to be selected.
+     *
+     * @param restRequest The incoming request
+     * @param restMethod The REST method with multiple strategies
+     * @param mockResponses List of available mock responses
+     * @param pathParameters Path parameters from the request
+     * @param httpServletRequest The HTTP servlet request
+     * @return The matching mock response or null if no match
+     */
+    private RestMockResponse evaluateMultipleStrategies(final RestRequest restRequest,
+                                                        final RestMethod restMethod,
+                                                        final List<RestMockResponse> mockResponses,
+                                                        final Map<String, Set<String>> pathParameters,
+                                                        final HttpServletRequest httpServletRequest,
+                                                        final String projectId,
+                                                        final String applicationId,
+                                                        final String resourceId) {
+        
+        // Evaluate guards FIRST, independently of response strategies
+        final List<RestMockResponse> guards = mockResponses.stream()
+                .filter(mockResponse -> mockResponse.getIsGuard().orElse(false))
+                .collect(Collectors.toList());
+        
+        for(RestMockResponse guard : guards){
+            if(!RestHeaderQueryValidator.validate(guard.getHeaderQueries(), restRequest.getHttpHeaders())){
+                LOGGER.debug("Guard failed validation, returning guard response: " + guard.getName());
+                return guard;
+            }
+        }
+        
+        // Filter out guards from regular response selection
+        List<RestMockResponse> nonGuardResponses = mockResponses.stream()
+                .filter(mockResponse -> !mockResponse.getIsGuard().orElse(false))
+                .collect(Collectors.toList());
+        
+        if (!restMethod.getMultipleResponseStrategy().isPresent()) {
+            LOGGER.warn("Multiple response strategy is selected but no strategies are configured");
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
+        }
+
+        List<RestResponseStrategy> strategies = restMethod.getMultipleResponseStrategy().get().getStrategies();
+        if (strategies.isEmpty()) {
+            LOGGER.warn("Multiple response strategy is selected but no strategies are configured");
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
+        }
+
+        // Find responses that match ALL selected strategies
+        List<RestMockResponse> candidates = nonGuardResponses.stream()
+                .filter(mockResponse -> {
+                    boolean matchesAllStrategies = true;
+                    
+                    for (RestResponseStrategy strategy : strategies) {
+                        boolean matchesStrategy = false;
+                        
+                        switch (strategy) {
+                            case QUERY_MATCH:
+                                matchesStrategy = RestParameterQueryValidator.validate(mockResponse.getParameterQueries(), pathParameters);
+                                break;
+                            case XPATH:
+                                matchesStrategy = restRequest.getBody()
+                                        .map(body -> mockResponse.getXpathExpressions()
+                                                .stream()
+                                                .anyMatch(xPathExpression -> XPathUtility.isValidXPathExpr(body, xPathExpression.getExpression())))
+                                        .orElse(false);
+                                break;
+                            case JSON_PATH:
+                                matchesStrategy = restRequest.getBody()
+                                        .map(body -> mockResponse.getJsonPathExpressions()
+                                                .stream()
+                                                .anyMatch(jsonPathExpression -> JsonPathUtility.isValidJsonPathExpr(body, jsonPathExpression.getExpression())))
+                                        .orElse(false);
+                                break;
+                            case HEADER_QUERY_MATCH:
+                                matchesStrategy = RestHeaderQueryValidator.validate(mockResponse.getHeaderQueries(), restRequest.getHttpHeaders());
+                                break;
+                            case RANDOM:
+                            case SEQUENCE:
+                                // These strategies don't have specific matching criteria
+                                // They are handled at the response selection level
+                                matchesStrategy = true;
+                                break;
+                            default:
+                                LOGGER.warn("Unknown strategy in multiple response evaluation: {}", strategy);
+                                matchesStrategy = false;
+                        }
+                        
+                        if (!matchesStrategy) {
+                            matchesAllStrategies = false;
+                            break;
+                        }
+                    }
+                    
+                    return matchesAllStrategies;
+                })
+                .collect(Collectors.toList());
+
+        if (candidates.isEmpty()) {
+            LOGGER.info("No mock response matches all selected strategies");
+            return this.getDefaultMockResponse(restMethod, nonGuardResponses).orElse(null);
+        }
+
+        // If we have candidates, apply RANDOM or SEQUENCE logic if they are selected
+        if (strategies.contains(RestResponseStrategy.RANDOM)) {
+            final int responseIndex = RANDOM.nextInt(candidates.size());
+            return candidates.get(responseIndex);
+        } else if (strategies.contains(RestResponseStrategy.SEQUENCE)) {
+            Integer currentSequenceNumber = restMethod.getCurrentResponseSequenceIndex();
+            if (currentSequenceNumber >= candidates.size()) {
+                currentSequenceNumber = 0;
+            }
+            RestMockResponse selectedResponse = candidates.get(currentSequenceNumber);
+            
+            // Update sequence index for next request
+            serviceProcessor.process(UpdateCurrentRestMockResponseSequenceIndexInput.builder()
+                    .projectId(projectId)
+                    .applicationId(applicationId)
+                    .resourceId(resourceId)
+                    .methodId(restMethod.getId())
+                    .currentRestMockResponseSequenceIndex(currentSequenceNumber + 1)
+                    .build());
+            
+            return selectedResponse;
+        }
+
+        // Return the first candidate if no RANDOM or SEQUENCE strategy is selected
+        return candidates.getFirst();
     }
 
 }

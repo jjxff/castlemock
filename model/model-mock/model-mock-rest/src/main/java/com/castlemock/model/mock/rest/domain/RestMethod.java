@@ -67,6 +67,10 @@ public class RestMethod {
     private final RestResponseStrategy responseStrategy;
 
     @XmlElement
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private final RestMultipleResponseStrategy multipleResponseStrategy;
+
+    @XmlElement
     private final Integer currentResponseSequenceIndex;
 
     @XmlElement
@@ -100,6 +104,7 @@ public class RestMethod {
         this.resourceId = Objects.requireNonNull(builder.resourceId, "resourceId");
         this.httpMethod = Objects.requireNonNull(builder.httpMethod, "httpMethod");
         this.responseStrategy = Objects.requireNonNull(builder.responseStrategy, "responseStrategy");
+        this.multipleResponseStrategy = builder.multipleResponseStrategy;
         this.currentResponseSequenceIndex = Objects.requireNonNull(builder.currentResponseSequenceIndex, "currentResponseSequenceIndex");
         this.defaultBody = builder.defaultBody;
         this.forwardedEndpoint = builder.forwardedEndpoint;
@@ -149,6 +154,10 @@ public class RestMethod {
 
     public RestResponseStrategy getResponseStrategy() {
         return responseStrategy;
+    }
+
+    public Optional<RestMultipleResponseStrategy> getMultipleResponseStrategy() {
+        return Optional.ofNullable(multipleResponseStrategy);
     }
 
     public Integer getCurrentResponseSequenceIndex() {
@@ -228,6 +237,7 @@ public class RestMethod {
                 .resourceId(this.resourceId)
                 .defaultBody(this.defaultBody)
                 .responseStrategy(this.responseStrategy)
+                .multipleResponseStrategy(this.multipleResponseStrategy)
                 .status(this.status)
                 .httpMethod(this.httpMethod)
                 .mockResponses(Optional.ofNullable(this.mockResponses)
@@ -253,6 +263,7 @@ public class RestMethod {
         private String forwardedEndpoint;
         private RestMethodStatus status;
         private RestResponseStrategy responseStrategy;
+        private RestMultipleResponseStrategy multipleResponseStrategy;
         private Integer currentResponseSequenceIndex = 0;
         private Boolean simulateNetworkDelay;
         private Long networkDelay;
@@ -302,6 +313,11 @@ public class RestMethod {
 
         public Builder responseStrategy(final RestResponseStrategy responseStrategy) {
             this.responseStrategy = responseStrategy;
+            return this;
+        }
+
+        public Builder multipleResponseStrategy(final RestMultipleResponseStrategy multipleResponseStrategy) {
+            this.multipleResponseStrategy = multipleResponseStrategy;
             return this;
         }
 

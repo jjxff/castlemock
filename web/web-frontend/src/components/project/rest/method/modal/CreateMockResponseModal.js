@@ -35,7 +35,8 @@ class CreateMockResponseModal extends PureComponent {
             newMockResponse: {
                 name: "",
                 status: "ENABLED",
-                httpStatusCode: 200
+                httpStatusCode: 200,
+                isGuard: false
             }
         };
 

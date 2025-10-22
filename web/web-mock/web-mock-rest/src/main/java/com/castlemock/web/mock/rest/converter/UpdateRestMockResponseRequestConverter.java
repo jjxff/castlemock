@@ -31,6 +31,7 @@ public final class UpdateRestMockResponseRequestConverter {
                 .usingExpressions(request.getUsingExpressions()
                         .orElse(null))
                 .xpathExpressions(request.getXpathExpressions())
+                .isGuard(request.getIsGuard().orElse(null))
                 .build();
     }
 

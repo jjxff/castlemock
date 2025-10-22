@@ -3,13 +3,14 @@
 <h1 align="center"> Castle Mock: <br/>Mock RESTful APIs and SOAP web services</h1>
 
 > [!CAUTION]
-> Castle Mock is no longer maintained and will not receive future updates.  
-> The [GitHub repository](https://github.com/castlemock/castlemock) remains available for reference, but we recommend exploring alternatives for active use. The [Docker Hub repository](https://hub.docker.com/r/castlemock/castlemock) will also be deprecated and eventually deleted. 
-> Please see **[DEPRECATION](https://github.com/castlemock/castlemock/blob/master/DEPRECATION.md)** for more information.
+> **Original Castle Mock** is no longer maintained and will not receive future updates from the original maintainers.  
+> The [original GitHub repository](https://github.com/castlemock/castlemock) remains available for reference, but the original team recommends exploring alternatives for active use.
+> 
+> **This is a community fork** attempting to continue development with improvements and new features. This version includes enhancements not available in the original deprecated version.
 
 <p align="center">
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue.svg"></a>
-    <img src="https://img.shields.io/badge/status-unmaintained-red">
+    <img src="https://img.shields.io/badge/status-community%20maintained-green">
 </p>
 
 **Castle Mock** is a web application that provides the functionality to mock out RESTful APIs and SOAP web services. This functionality allows client-side developers to completely mimic a server side behaviour and shape the responses themselves.
@@ -18,7 +19,9 @@ Table Of Content
 ----
 
 - [About](#about)
+- [Community Fork Changes](#community-fork-changes)
 - [What to Use Castle Mock for and When to Use It](#what-to-use-castle-mock-for-and-when-to-use-it)
+- [Dynamic Expressions](#dynamic-expressions)
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [License](#license)
@@ -29,9 +32,162 @@ Table Of Content
 
 **Castle Mock** is completely free and open source (Apache License). It is built with Java and the application itself is deployed to an Apache Tomcat server.
 
+## Community Fork Changes
+
+This community fork includes enhancements and new features over the original deprecated version. 
+
+**Latest Version: 1.69.3** - [View Full Changelog](changelog/1.69.3.md)
+
+### Recent Highlights
+- **🔐 Random Hexadecimal Expression (v1.69.3)**: New `${RANDOM_HEX(length="64")}` expression for generating cryptographic tokens and identifiers
+- **🔧 ANTLR Grammar Enhancement (v1.69.3)**: Fixed JWT expression parsing to support underscores in claim names and Unicode characters
+- **📅 Dynamic Date Expressions (v1.69.2)**: New time-based expressions for mock responses
+  - `${NOW(offset="30 seconds")}` - Current date/time with offset support
+  - `${DATE(offset="5 days")}` - Current date only with offset calculations
+  - `${TIME(offset="2 hours")}` - Current time only with offset support
+  - All expressions support positive/negative offsets in seconds, minutes, hours, and days
+- **🔧 JSON Path Body Mapping Fix (v1.69.2)**: Fixed `${BODY_JSON_PATH()}` expression to properly copy request JSON fields to responses
+- **🛡️ Guard Functionality (v1.69.1)**: New header interceptor feature for REST mock responses
+  - Configure guards to validate headers (JWT tokens, API keys) before processing other responses
+  - Returns configured response immediately if validation fails (e.g., 401 Unauthorized)
+  - Works independently of Response Strategies for maximum flexibility
+- **Multiple Response Strategies**: REST methods can now use multiple response strategies simultaneously with AND logic
+- **Enhanced Expression Support**: Improved conditional response matching capabilities
+- **Backward Compatibility**: All changes are fully backward compatible with existing projects
+
 ## What to Use Castle Mock for and When to Use It
 
 Use **Castle Mock** to mock out RESTful APIs and SOAP web services for testing purposes for when either performing system or integration tests. It is recommended to only use **Castle Mock** on an internal network and never be used publically. **Castle Mock** is **NOT** developed or meant for anything else other than for testing purposes.
+
+## Dynamic Expressions
+
+Castle Mock supports dynamic expressions in mock responses using the `${}` syntax. These expressions are processed at runtime to generate dynamic content.
+
+### Date and Time Expressions
+
+**NOW Expression** - Returns current date/time in ISO-8601 format:
+```
+${NOW}                           // Current timestamp: 2024-03-15T14:30:45Z
+${NOW(offset="30 seconds")}      // 30 seconds from now
+${NOW(offset="-15 minutes")}     // 15 minutes ago
+${NOW(offset="2 hours")}         // 2 hours from now
+${NOW(offset="5 days")}          // 5 days from now
+```
+
+**DATE Expression** - Returns current date in ISO date format:
+```
+${DATE}                          // Current date: 2024-03-15
+${DATE(offset="7 days")}         // 7 days from today
+${DATE(offset="-30 days")}       // 30 days ago
+```
+
+**TIME Expression** - Returns current time in ISO time format:
+```
+${TIME}                          // Current time: 14:30:45
+${TIME(offset="45 minutes")}     // 45 minutes from now
+${TIME(offset="-2 hours")}       // 2 hours ago
+```
+
+### Request Data Expressions
+
+**JSON Path Body Mapping** - Copy fields from request JSON to response:
+```json
+// Request: {"userId": "123", "amount": 50.75}
+// Response template:
+{
+  "transactionId": "${RANDOM_UUID}",
+  "userId": "${BODY_JSON_PATH(expression=\"$.userId\")}",
+  "processedAmount": "${BODY_JSON_PATH(expression=\"$.amount\")}"
+}
+```
+
+**Query String Parameters**:
+```
+${QUERY_STRING(name="param1")}   // Get query parameter value
+```
+
+**Path Parameters**:
+```
+${PATH_PARAMETER(name="id")}     // Get path parameter value
+```
+
+**URL Host**:
+```
+${URL_HOST}                      // Get request host
+```
+
+### Random Data Expressions
+
+**Random UUID**:
+```
+${RANDOM_UUID}                   // Random UUID: f47ac10b-58cc-4372-a567-0e02b2c3d479
+```
+
+**Random Integers**:
+```
+${RANDOM_INTEGER}                // Random integer
+${RANDOM_INTEGER(min="1", max="100")}  // Random integer between 1-100
+```
+
+**Random Decimals**:
+```
+${RANDOM_DECIMAL}                // Random decimal
+${RANDOM_DECIMAL(min="0.0", max="1.0")}  // Random decimal between 0.0-1.0
+```
+
+**Random Strings**:
+```
+${RANDOM_STRING(length="10")}    // Random string of length 10
+```
+
+**Random Hexadecimal**:
+```
+${RANDOM_HEX}                    // Random hex string (32 chars): a1b2c3d4e5f67890abcdef1234567890
+${RANDOM_HEX(length="64")}       // Random hex string (64 chars): cbd198b7ddc8e078435e99aea97546110f98b5011f107295d977c590d0960ec3f
+${RANDOM_HEX(length="16")}       // Random hex string (16 chars): a1b2c3d4e5f67890
+```
+
+### JWT Token Generation
+
+**JWT with HMAC algorithms** (HS256, HS384, HS512):
+```
+${JWT}                           // Default JWT with HS256 and default secret
+${JWT(algorithm="HS256", secret="my-secret")}  // HS256 with custom secret
+${JWT(algorithm="HS384", secret="my-secret")}  // HS384 algorithm
+${JWT(algorithm="HS512", secret="my-secret")}  // HS512 algorithm
+```
+
+**JWT with custom claims and expiration**:
+```
+${JWT(algorithm="HS512", secret="api-key", exp="+300", user_id="12345", is_valid="true", issuer="my-service")}
+```
+
+**JWT with dynamic claims from request body**:
+```
+${JWT(algorithm="HS256", secret="secret", factor="@body.userId", status="@body.message", exp="+600")}
+```
+
+**Real-world JWT example**:
+```json
+{
+  "access_token": "${JWT(algorithm=\"HS512\", secret=\"my-secret-key\", factor=\"@body.userId\", is_valid=\"true\", issuer=\"srv-authfactors-arq\", status=\"Código OTP verificado\", exp=\"+300\")}"
+}
+```
+
+### XPath Expressions
+
+For XML request bodies:
+```
+${BODY_XPATH(expression="//user/@id")}  // Extract XML attributes/elements
+```
+
+### Usage Notes
+
+- All expressions are case-insensitive (`NOW`, `now`, `Now` all work)
+- Offset formats support: `seconds`, `minutes`, `hours`, `days` (singular or plural)
+- Negative offsets use minus sign: `-30 minutes`
+- Enable "Use Expression" checkbox in mock response configuration
+- Expressions work in both REST and SOAP mock responses
 
 ## Installation
 

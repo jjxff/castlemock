@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  castlemock:
+    image: jjxff/castlemock-community:1.69.1
+    container_name: castlemock
+    ports:
+      - "8085:8080"
+    # La app corre en Tomcat y guarda su data en el home del usuario
+    volumes:
+      - castlemock-com-data:/root/.castlemock
+    restart: unless-stopped
+
+volumes:
+  castlemock-com-data:

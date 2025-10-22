@@ -60,6 +60,7 @@ public final class RestMockResponseConverter {
                         .map(HttpHeaderConverter::toHttpHeaderFile)
                         .collect(Collectors.toList()))
                 .contentEncodings(new ArrayList<>(restMockResponse.getContentEncodings()))
+                .isGuard(restMockResponse.getIsGuard().orElse(null))
                 .build();
     }
 

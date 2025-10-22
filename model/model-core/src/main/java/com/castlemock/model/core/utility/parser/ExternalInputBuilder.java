@@ -16,6 +16,7 @@
 package com.castlemock.model.core.utility.parser;
 
 import com.castlemock.model.core.http.HttpParameter;
+import com.castlemock.model.core.utility.parser.expression.BodyJsonPathExpression;
 import com.castlemock.model.core.utility.parser.expression.BodyXPathExpression;
 import com.castlemock.model.core.utility.parser.expression.PathParameterExpression;
 import com.castlemock.model.core.utility.parser.expression.QueryStringExpression;
@@ -60,6 +61,7 @@ public class ExternalInputBuilder {
 		if (this.requestBody != null) {
 			final ExpressionArgument<?> bodyArgument = new ExpressionArgumentString(this.requestBody);
 			immutableMapBuilder.put(BodyXPathExpression.BODY_ARGUMENT, bodyArgument);
+			immutableMapBuilder.put(BodyJsonPathExpression.BODY_ARGUMENT, bodyArgument);
 		}
 		if (this.requestUrl != null) {
 			final ExpressionArgument<?> urlArgument = new ExpressionArgumentString(this.requestUrl);

@@ -38,6 +38,7 @@ public final class RestMethodFileConverter {
                 .currentResponseSequenceIndex(restMethodFile.getCurrentResponseSequenceIndex())
                 .defaultBody(restMethodFile.getDefaultBody())
                 .responseStrategy(restMethodFile.getResponseStrategy())
+                .multipleResponseStrategy(restMethodFile.getMultipleResponseStrategy())
                 .simulateNetworkDelay(restMethodFile.getSimulateNetworkDelay())
                 .automaticForward(restMethodFile.getAutomaticForward())
                 .uri(null)

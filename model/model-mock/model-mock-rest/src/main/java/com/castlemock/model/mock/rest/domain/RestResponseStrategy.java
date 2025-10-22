@@ -29,6 +29,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum RestResponseStrategy {
 
-    RANDOM, SEQUENCE, QUERY_MATCH, XPATH, JSON_PATH, HEADER_QUERY_MATCH
+    RANDOM, SEQUENCE, QUERY_MATCH, XPATH, JSON_PATH, HEADER_QUERY_MATCH, MULTIPLE
 
 }

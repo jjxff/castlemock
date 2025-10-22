@@ -22,6 +22,8 @@ import com.castlemock.app.config.PropertyConfig;
 import com.castlemock.app.config.RestSecurityConfig;
 import com.castlemock.app.config.SecurityConfig;
 import com.castlemock.deploy.tomcat.common.TomcatConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.springframework.boot.SpringApplication;
@@ -73,4 +75,5 @@ public class JarTomcatApplication extends Application implements WebApplicationI
                 }}
         );
     }
+
 }

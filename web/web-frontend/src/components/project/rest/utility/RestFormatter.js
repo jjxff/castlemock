@@ -37,9 +37,31 @@ const methodResponseStrategyFormatter = (responseStrategy) => {
         return "Parameter query match"
     } else if(responseStrategy === "HEADER_QUERY_MATCH"){
         return "Header query match"
+    } else if(responseStrategy === "MULTIPLE"){
+        return "Multiple strategies (AND)"
     }
 
     return responseStrategy;
+};
+
+const methodMultipleResponseStrategyFormatter = (strategies) => {
+    if(!strategies || strategies.length === 0) {
+        return "No strategies selected";
+    }
+    
+    const strategyNames = strategies.map(strategy => {
+        switch(strategy) {
+            case "RANDOM": return "Random";
+            case "SEQUENCE": return "Sequence";
+            case "XPATH": return "XPath";
+            case "JSON_PATH": return "JSON Path";
+            case "QUERY_MATCH": return "Parameter query match";
+            case "HEADER_QUERY_MATCH": return "Header query match";
+            default: return strategy;
+        }
+    });
+    
+    return strategyNames.join(" + ");
 };
 
 const methodStatusFormatter = (status) => {
@@ -75,6 +97,7 @@ const definitionTypeFormatter = (status) => {
 export {
     mockResponseStatusFormatter,
     methodResponseStrategyFormatter,
+    methodMultipleResponseStrategyFormatter,
     methodStatusFormatter,
     definitionTypeFormatter
 };

@@ -50,6 +50,7 @@ public class CreateRestMockResponseRequest {
     private List<RestXPathExpression> xpathExpressions;
     private List<RestJsonPathExpression> jsonPathExpressions;
     private List<RestHeaderQuery> headerQueries;
+    private Boolean isGuard;
 
     private CreateRestMockResponseRequest(){
 
@@ -66,7 +67,9 @@ public class CreateRestMockResponseRequest {
         this.parameterQueries = Optional.ofNullable(builder.parameterQueries).orElseGet(List::of);
         this.xpathExpressions = Optional.ofNullable(builder.xpathExpressions).orElseGet(List::of);
         this.jsonPathExpressions = Optional.ofNullable(builder.jsonPathExpressions).orElseGet(List::of);
-        this.headerQueries = Optional.ofNullable(builder.headerQueries).orElseGet(List::of);   }
+        this.headerQueries = Optional.ofNullable(builder.headerQueries).orElseGet(List::of);
+        this.isGuard = builder.isGuard;
+    }
     
     public String getName() {
         return name;
@@ -124,6 +127,10 @@ public class CreateRestMockResponseRequest {
                 .orElseGet(List::of);
     }
 
+    public Optional<Boolean> getIsGuard() {
+        return Optional.ofNullable(isGuard);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,14 +146,15 @@ public class CreateRestMockResponseRequest {
                 Objects.equals(parameterQueries, that.parameterQueries) &&
                 Objects.equals(xpathExpressions, that.xpathExpressions) &&
                 Objects.equals(jsonPathExpressions, that.jsonPathExpressions) &&
-                Objects.equals(headerQueries, that.headerQueries);
+                Objects.equals(headerQueries, that.headerQueries) &&
+                Objects.equals(isGuard, that.isGuard);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, body, httpStatusCode, status, usingExpressions,
                 httpHeaders, contentEncodings, parameterQueries, xpathExpressions,
-                jsonPathExpressions, headerQueries);
+                jsonPathExpressions, headerQueries, isGuard);
     }
 
     public static Builder builder() {
@@ -167,6 +175,7 @@ public class CreateRestMockResponseRequest {
         private List<RestXPathExpression> xpathExpressions;
         private List<RestJsonPathExpression> jsonPathExpressions;
         private List<RestHeaderQuery> headerQueries;
+        private Boolean isGuard;
 
         private Builder() {
         }
@@ -226,6 +235,10 @@ public class CreateRestMockResponseRequest {
             return this;
         }
 
+        public Builder isGuard(final Boolean isGuard) {
+            this.isGuard = isGuard;
+            return this;
+        }
 
         public CreateRestMockResponseRequest build() {
             return new CreateRestMockResponseRequest(this);

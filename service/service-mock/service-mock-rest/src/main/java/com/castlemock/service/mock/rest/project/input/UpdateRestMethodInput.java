@@ -19,6 +19,7 @@ package com.castlemock.service.mock.rest.project.input;
 import com.castlemock.model.core.Input;
 import com.castlemock.model.core.http.HttpMethod;
 import com.castlemock.model.mock.rest.domain.RestMethodStatus;
+import com.castlemock.model.mock.rest.domain.RestMultipleResponseStrategy;
 import com.castlemock.model.mock.rest.domain.RestResponseStrategy;
 
 import java.util.Objects;
@@ -39,6 +40,7 @@ public final class UpdateRestMethodInput implements Input {
     private final String forwardedEndpoint;
     private final RestMethodStatus status;
     private final RestResponseStrategy responseStrategy;
+    private final RestMultipleResponseStrategy multipleResponseStrategy;
     private final Boolean simulateNetworkDelay;
     private final Long networkDelay;
     private final String defaultMockResponseId;
@@ -56,6 +58,7 @@ public final class UpdateRestMethodInput implements Input {
 
         this.simulateNetworkDelay = builder.simulateNetworkDelay;
         this.forwardedEndpoint = builder.forwardedEndpoint;
+        this.multipleResponseStrategy = builder.multipleResponseStrategy;
         this.networkDelay = builder.networkDelay;
         this.defaultMockResponseId = builder.defaultMockResponseId;
         this.automaticForward = builder.automaticForward;
@@ -95,6 +98,10 @@ public final class UpdateRestMethodInput implements Input {
 
     public RestResponseStrategy getResponseStrategy() {
         return responseStrategy;
+    }
+
+    public Optional<RestMultipleResponseStrategy> getMultipleResponseStrategy() {
+        return Optional.ofNullable(multipleResponseStrategy);
     }
 
     public Optional<Boolean> getSimulateNetworkDelay() {
@@ -170,6 +177,7 @@ public final class UpdateRestMethodInput implements Input {
         private String forwardedEndpoint;
         private RestMethodStatus status;
         private RestResponseStrategy responseStrategy;
+        private RestMultipleResponseStrategy multipleResponseStrategy;
         private Boolean simulateNetworkDelay;
         private Long networkDelay;
         private String defaultMockResponseId;
@@ -220,6 +228,11 @@ public final class UpdateRestMethodInput implements Input {
 
         public Builder responseStrategy(final RestResponseStrategy responseStrategy) {
             this.responseStrategy = responseStrategy;
+            return this;
+        }
+
+        public Builder multipleResponseStrategy(final RestMultipleResponseStrategy multipleResponseStrategy) {
+            this.multipleResponseStrategy = multipleResponseStrategy;
             return this;
         }
 

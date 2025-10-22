@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.castlemock</groupId>
         <artifactId>castlemock</artifactId>
-        <version>${project.version}</version>
+        <version>1.69.2</version>
         <relativePath>../</relativePath>
     </parent>
 
@@ -62,9 +62,18 @@
             <resource>
                 <directory>./src/main/resources</directory>
                 <targetPath>./</targetPath>
+                <filtering>true</filtering>
                 <includes>
-                    <include>**/*.*</include>
+                    <include>version.properties</include>
                 </includes>
+            </resource>
+            <resource>
+                <directory>./src/main/resources</directory>
+                <targetPath>./</targetPath>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>version.properties</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
