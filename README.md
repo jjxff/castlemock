@@ -36,9 +36,11 @@ Table Of Content
 
 This community fork includes enhancements and new features over the original deprecated version. 
 
-**Latest Version: 1.69.2** - [View Full Changelog](changelog/1.69.2.md)
+**Latest Version: 1.69.3** - [View Full Changelog](changelog/1.69.3.md)
 
 ### Recent Highlights
+- **🔐 Random Hexadecimal Expression (v1.69.3)**: New `${RANDOM_HEX(length="64")}` expression for generating cryptographic tokens and identifiers
+- **🔧 ANTLR Grammar Enhancement (v1.69.3)**: Fixed JWT expression parsing to support underscores in claim names and Unicode characters
 - **📅 Dynamic Date Expressions (v1.69.2)**: New time-based expressions for mock responses
   - `${NOW(offset="30 seconds")}` - Current date/time with offset support
   - `${DATE(offset="5 days")}` - Current date only with offset calculations
@@ -136,6 +138,40 @@ ${RANDOM_DECIMAL(min="0.0", max="1.0")}  // Random decimal between 0.0-1.0
 **Random Strings**:
 ```
 ${RANDOM_STRING(length="10")}    // Random string of length 10
+```
+
+**Random Hexadecimal**:
+```
+${RANDOM_HEX}                    // Random hex string (32 chars): a1b2c3d4e5f67890abcdef1234567890
+${RANDOM_HEX(length="64")}       // Random hex string (64 chars): cbd198b7ddc8e078435e99aea97546110f98b5011f107295d977c590d0960ec3f
+${RANDOM_HEX(length="16")}       // Random hex string (16 chars): a1b2c3d4e5f67890
+```
+
+### JWT Token Generation
+
+**JWT with HMAC algorithms** (HS256, HS384, HS512):
+```
+${JWT}                           // Default JWT with HS256 and default secret
+${JWT(algorithm="HS256", secret="my-secret")}  // HS256 with custom secret
+${JWT(algorithm="HS384", secret="my-secret")}  // HS384 algorithm
+${JWT(algorithm="HS512", secret="my-secret")}  // HS512 algorithm
+```
+
+**JWT with custom claims and expiration**:
+```
+${JWT(algorithm="HS512", secret="api-key", exp="+300", user_id="12345", is_valid="true", issuer="my-service")}
+```
+
+**JWT with dynamic claims from request body**:
+```
+${JWT(algorithm="HS256", secret="secret", factor="@body.userId", status="@body.message", exp="+600")}
+```
+
+**Real-world JWT example**:
+```json
+{
+  "access_token": "${JWT(algorithm=\"HS512\", secret=\"my-secret-key\", factor=\"@body.userId\", is_valid=\"true\", issuer=\"srv-authfactors-arq\", status=\"Código OTP verificado\", exp=\"+300\")}"
+}
 ```
 
 ### XPath Expressions

@@ -23,6 +23,7 @@ import com.castlemock.model.core.utility.parser.expression.Expression;
 import com.castlemock.model.core.utility.parser.expression.ExpressionInput;
 import com.castlemock.model.core.utility.parser.expression.ExpressionInputParser;
 import com.castlemock.model.core.utility.parser.expression.FakerExpression;
+import com.castlemock.model.core.utility.parser.expression.JwtExpression;
 import com.castlemock.model.core.utility.parser.expression.NowExpression;
 import com.castlemock.model.core.utility.parser.expression.PathParameterExpression;
 import com.castlemock.model.core.utility.parser.expression.QueryStringExpression;
@@ -38,6 +39,7 @@ import com.castlemock.model.core.utility.parser.expression.RandomIntegerExpressi
 import com.castlemock.model.core.utility.parser.expression.RandomLongExpression;
 import com.castlemock.model.core.utility.parser.expression.RandomPasswordExpression;
 import com.castlemock.model.core.utility.parser.expression.RandomStringExpression;
+import com.castlemock.model.core.utility.parser.expression.RandomHexExpression;
 import com.castlemock.model.core.utility.parser.expression.RandomUUIDExpression;
 import com.castlemock.model.core.utility.parser.expression.TimeExpression;
 import com.castlemock.model.core.utility.parser.expression.UrlHostExpression;
@@ -85,9 +87,11 @@ public class TextParser {
         EXPRESSIONS.put(UrlHostExpression.IDENTIFIER, new UrlHostExpression());
         EXPRESSIONS.put(BodyXPathExpression.IDENTIFIER, new BodyXPathExpression());
         EXPRESSIONS.put(FakerExpression.IDENTIFIER, new FakerExpression());
+        EXPRESSIONS.put(JwtExpression.IDENTIFIER, new JwtExpression());
         EXPRESSIONS.put(NowExpression.IDENTIFIER, new NowExpression());
         EXPRESSIONS.put(DateExpression.IDENTIFIER, new DateExpression());
         EXPRESSIONS.put(TimeExpression.IDENTIFIER, new TimeExpression());
+        EXPRESSIONS.put(RandomHexExpression.IDENTIFIER, new RandomHexExpression());
     }
     
     private final Map<String,Expression> expressions;
